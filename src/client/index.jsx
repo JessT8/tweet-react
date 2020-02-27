@@ -6,26 +6,28 @@ import tweets from 'tweets'
 class User extends React.Component{
    render() {
     return (
-      <div>
-       {this.props.user}
-      </div>
+     <h5 class="card-title">
+       {this.props.user.screen_name}
+      </h5>
     );
 }
 }
 class Entities extends React.Component{
    render() {
     return (
-      <div>
-      <UrlEntity urls={this.props.entity.urls}/>
+        <div>
+      <UrlEntity urls={this.props.entity.urls} photo={this.props.photo}/>
       </div>
     );
 }
 }
 class UrlEntity extends React.Component{
        render() {
-                console.log(this.props.url);
         let urlsEntitity = this.props.urls.map(url=>{
-            return <a href={url.url}>{url.url}</a>
+            if(this.props.photo){
+                return <img src={url.url}></img>
+            }else{
+            return <a href={url.url}>{url.url}</a>}
         })
     return (
       <div>
@@ -34,14 +36,23 @@ class UrlEntity extends React.Component{
     );
 }
 }
+
 class Tweet extends React.Component{
       render() {
     let tweets = this.props.tweets.map(tweet=>{
-        return (<li>
-            <User user={tweet.user.screen_name}/>
-            <p>{tweet.text}</p>
-           <Entities entity={tweet.entities}/>
-            </li>)
+        let display;
+        if (tweet.entities.media)
+            { display = (<Entities entity={tweet.entities} photo={true}/>)}
+        else{
+           (<Entities entity={tweet.entities} photo={false}/>)
+        }
+        return (<div class="card w-75">
+        <div class="card-body">
+            <User user={tweet.user}/>
+            {display}
+        <p class="card-text">{tweet.text}</p>
+             </div>
+            </div>)
     });
     return (
       <div>
@@ -53,7 +64,6 @@ class Tweet extends React.Component{
 
 class App extends React.Component {
   render() {
-
     return (
       <div>
       <Tweet tweets={tweets.tweets}/>
